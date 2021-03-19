@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Header from "./components/Header"
 import TodoItem from "./components/TodoItem"
 import AddTodo from "./components/AddTodo"
@@ -16,12 +16,18 @@ export default function App() {
   ])
 
   const submitHandler = (text) => {
-    setTodo((prevTodo) => {
-      return [
-        {text:text, key:Math.random().toString()},
-        ...prevTodo
-      ]
-    })
+    if(text.length > 3){
+      setTodo((prevTodo) => {
+        return [
+          {text:text, key:Math.random().toString()},
+          ...prevTodo
+        ]
+      })
+    }else{
+      Alert.alert("OPPS", "Todo item must be three character long", [
+        {text:"Close", onPress: () =>console.log("alert close")}
+      ])
+    }
   }
 
   const pressHandler = (key) => {
@@ -32,20 +38,27 @@ export default function App() {
   
 
   return (
-    <View style={styles.container}>
-      <Header/>
-      <View style={styles.content}>
-        <AddTodo submitHandler={submitHandler}/>
-        <View style={styles.list}>
-          <FlatList
-          data={todo}
-          renderItem={({item}) => (
-            <TodoItem item={item} pressHandler={pressHandler}/>
-          )}
-          />
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+        console.log('keyboard dissmiss')
+      }}
+    >
+        <View style={styles.container}>
+          <Header/>
+          <View style={styles.content}>
+            <AddTodo submitHandler={submitHandler}/>
+            <View style={styles.list}>
+              <FlatList
+              data={todo}
+              renderItem={({item}) => (
+                <TodoItem item={item} pressHandler={pressHandler}/>
+              )}
+              />
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
