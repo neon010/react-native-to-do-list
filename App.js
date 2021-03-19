@@ -1,12 +1,50 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useState} from 'react';
+import { StyleSheet, View, FlatList } from 'react-native';
+import Header from "./components/Header"
+import TodoItem from "./components/TodoItem"
+import AddTodo from "./components/AddTodo"
 
 export default function App() {
+
+  const [todo, setTodo] = useState([
+    {text:"making tea", key:"1"},
+    {text:"buying grocery", key:"2"},
+    {text:"study", key:"3"},
+    {text:"playing", key:"4"},
+    {text:"building game", key:"5"},
+    {text:"study react native", key:"6"}
+  ])
+
+  const submitHandler = (text) => {
+    setTodo((prevTodo) => {
+      return [
+        {text:text, key:Math.random().toString()},
+        ...prevTodo
+      ]
+    })
+  }
+
+  const pressHandler = (key) => {
+    setTodo((prevTodo) =>{
+      return prevTodo.filter(todo => todo.key !== key)
+    })
+  }
+  
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Header/>
+      <View style={styles.content}>
+        <AddTodo submitHandler={submitHandler}/>
+        <View style={styles.list}>
+          <FlatList
+          data={todo}
+          renderItem={({item}) => (
+            <TodoItem item={item} pressHandler={pressHandler}/>
+          )}
+          />
+        </View>
+      </View>
     </View>
   );
 }
@@ -14,8 +52,13 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    color:"#fff"
   },
+  content:{
+    padding: 20,
+    marginTop: 10
+  },
+  list: {
+    marginTop: 10
+  }
 });
